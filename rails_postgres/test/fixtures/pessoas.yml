@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  apelido: MyString
+  nome: MyString
+  nascimento: 2025-05-18
+  stack: 
+
+two:
+  apelido: MyString
+  nome: MyString
+  nascimento: 2025-05-18
+  stack: 
