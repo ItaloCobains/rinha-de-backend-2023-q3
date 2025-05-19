@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_19_130702) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_19_204532) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -23,7 +23,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_19_130702) do
     t.jsonb "stack", default: [], null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index "lower((((apelido)::text || (nome)::text) || (stack)::text)) gin_trgm_ops", name: "idx_pessoas_concat_trgm", using: :gin
+    t.index "lower((((apelido)::text || (nome)::text) || (stack)::text)) gist_trgm_ops", name: "idx_pessoas_concat_trgm_gist", using: :gist
     t.index ["apelido"], name: "index_pessoas_on_apelido", unique: true
     t.index ["nascimento"], name: "index_pessoas_on_nascimento"
     t.index ["nome"], name: "index_pessoas_on_nome"
