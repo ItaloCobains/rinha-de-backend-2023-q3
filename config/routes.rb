@@ -8,4 +8,9 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   root "home#index"
+
+  get 'contagem-pessoas', to: 'pessoa#contagem_pessoas'
+
+  resources :pessoas, only: [:index, :show, :create], controller: 'pessoa'
+
 end

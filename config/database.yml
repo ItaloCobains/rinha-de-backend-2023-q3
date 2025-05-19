@@ -16,12 +16,16 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  url: <%= ENV["DATABASE_URL"] %>
+  username: postgres
+  password: postgres
+  host: localhost
+  port: 5432
+  database: rails_app
+
 
 
 development:
   <<: *default
-  database: rails_postgres_development
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
@@ -80,9 +84,6 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: rails_postgres_production
-    username: rails_postgres
-    # password: <%= ENV["RAILS_POSTGRES_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
     database: rails_postgres_production_cache
