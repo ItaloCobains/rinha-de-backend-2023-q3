@@ -7,23 +7,14 @@ class PessoaController < ApplicationController
 
   def index
     search = params[:t]
-    
-    if search.blank?
-      return render json: { error: "Parâmetro de busca 't' é obrigatório" }, status: :bad_request
-    end
-    
+    return render json: { error: "Parâmetro de busca 't' é obrigatório" }, status: :bad_request if search.blank?
+
     search_term = "%#{search}%"
-    
-    @pessoas = Pessoa
-      .where("apelido ILIKE :search OR nome ILIKE :search", search: search_term)
-      .or(
-        Pessoa.where("exists(select 1 from jsonb_array_elements_text(stack) as elem where elem ILIKE :search)", search: search_term)
-      )
-      .limit(50)
-  
+
+    @pessoas = Pessoa.where("lower(apelido || nome || stack::text) LIKE ?", search_term.downcase).limit(50)
+
     render json: @pessoas
   end
-  
 
   def show
     @pessoa = Pessoa.find_by(id: params[:id])
