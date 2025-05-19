@@ -11,7 +11,7 @@ services:
       - RAILS_ENV=production
       - RAILS_LOG_TO_STDOUT=true
       - SECRET_KEY_BASE=a7c982873e4d55be7d85b5bd7c784cd1db0b9604abf2ea0ad9b267f6be52ba63c24c281f66596d9b66990d962cbf65ef48c54cdb37aaec93b2c7f4261fb7eed5
-      - DB_POOL=200
+      - DB_POOL=300
       - DB_PORT=5433
       - DB_HOST=db
       # - DB_PORT=6432
@@ -20,7 +20,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.2'
+          cpus: '0.4'
           memory: '400MB'
 
   api2:
@@ -34,7 +34,7 @@ services:
       - RAILS_ENV=production
       - RAILS_LOG_TO_STDOUT=true
       - SECRET_KEY_BASE=a7c982873e4d55be7d85b5bd7c784cd1db0b9604abf2ea0ad9b267f6be52ba63c24c281f66596d9b66990d962cbf65ef48c54cdb37aaec93b2c7f4261fb7eed5
-      - DB_POOL=200
+      - DB_POOL=300
       - DB_PORT=5433
       - DB_HOST=db
       # - DB_PORT=6432
@@ -43,7 +43,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.2'
+          cpus: '0.4'
           memory: '400MB'
 
   nginx:
@@ -76,7 +76,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: '0.7'
           memory: '2144MB'
           # cpus: '0.5'
           # memory: '1024MB'

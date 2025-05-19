@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require "falcon/environment/rack"
+require_relative "limited"
 
 hostname = File.basename(__dir__)
 port = ENV["PORT"] || 80
@@ -11,6 +12,10 @@ service hostname do
   count 1
 	preload "preload.rb"
 	include Falcon::Environment::Rack
+
+	endpoint_options do
+		super().merge(wrapper: Limited::Wrapper.new)
+	end
 
 	endpoint Async::HTTP::Endpoint.parse("http://0.0.0.0:#{port}")
 end
