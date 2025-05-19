@@ -8,19 +8,18 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5433/rails_app
       - RAILS_ENV=production
       - RAILS_LOG_TO_STDOUT=true
       - SECRET_KEY_BASE=a7c982873e4d55be7d85b5bd7c784cd1db0b9604abf2ea0ad9b267f6be52ba63c24c281f66596d9b66990d962cbf65ef48c54cdb37aaec93b2c7f4261fb7eed5
-      - DB_POOL=98
-      - DB_PORT=5433
-      - DB_HOST=db
+      - DB_POOL=500
+      - DB_PORT=6432
+      - DB_HOST=pgbouncer
       - RAILS_LOG_LEVEL=error
     deploy:
       resources:
         limits:
-          cpus: '0.25'
-          memory: '0.5GB'
+          cpus: '0.3'
+          memory: '512MB'
 
   api2:
     build:
@@ -30,19 +29,18 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5433/rails_app
       - RAILS_ENV=production
       - RAILS_LOG_TO_STDOUT=true
       - SECRET_KEY_BASE=a7c982873e4d55be7d85b5bd7c784cd1db0b9604abf2ea0ad9b267f6be52ba63c24c281f66596d9b66990d962cbf65ef48c54cdb37aaec93b2c7f4261fb7eed5
-      - DB_POOL=98
-      - DB_PORT=5433
-      - DB_HOST=db
+      - DB_POOL=500
+      - DB_PORT=6432
+      - DB_HOST=pgbouncer
       - RAILS_LOG_LEVEL=error
     deploy:
       resources:
         limits:
-          cpus: '0.25'
-          memory: '0.5GB'
+          cpus: '0.3'
+          memory: '512MB'
 
   nginx:
     image: nginx:latest
@@ -56,8 +54,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.25'
-          memory: '128MB'
+          cpus: '0.15'
+          memory: '512MB'
 
   db:
     image: postgres:latest
@@ -74,8 +72,30 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.75'
-          memory: '1920MB'
+          cpus: '0.5'
+          memory: '1024MB'
 
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    depends_on:
+      - db
+    ports:
+      - "6432:6432"
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_DATABASE=rails_app
+      - POSTGRESQL_HOST=db
+      - POSTGRESQL_PORT=5433
+      - PGBOUNCER_DATABASE=rails_app
+      - PGBOUNCER_PORT=6432
+      - POOL_MODE=transaction
+      - MAX_DB_CONNECTIONS=200
+      - PGBOUNCER_MAX_CLIENT_CONN=1000
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: '512MB'
 volumes:
   postgres_data:
