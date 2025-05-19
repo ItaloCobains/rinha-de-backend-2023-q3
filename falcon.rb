@@ -17,5 +17,7 @@ service hostname do
 		super().merge(wrapper: Limited::Wrapper.new)
 	end
 
-	endpoint Async::HTTP::Endpoint.parse("http://0.0.0.0:#{port}")
+	endpoint do
+		::Async::HTTP::Endpoint.parse("http://0.0.0.0:#{port}").with(**endpoint_options)
+	end
 end

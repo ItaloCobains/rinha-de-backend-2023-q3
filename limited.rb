@@ -15,10 +15,10 @@ module Limited
 		end
 		
 		# Create a new semaphore with the given limit.
-		def initialize(limit = 250)
+		def initialize(limit = ENV.fetch("DB_POOL", 5).to_i)
 			@queue = Thread::Queue.new
 			
-			Console.debug(self, "Initializing queue...", limit: limit)
+			Console.warn(self, "Initializing queue...", limit: limit)
 			limit.times{release}
 		end
 		
