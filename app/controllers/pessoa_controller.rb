@@ -27,10 +27,6 @@ class PessoaController < ApplicationController
   end
 
   def create
-    if Pessoa.exists?(apelido: params[:pessoa][:apelido])
-      render json: { error: "Apelido já existente" }, status: :unprocessable_entity and return
-    end
-
     @pessoa = Pessoa.new(pessoa_params)
     
     if @pessoa.save
@@ -41,6 +37,8 @@ class PessoaController < ApplicationController
     end
   rescue ActionController::ParameterMissing, JSON::ParserError => e
     render json: { error: "Requisição inválida" }, status: :bad_request
+  rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
+    render json: { error: "Apelido já existente" }, status: :unprocessable_entity and return
   end
 
   private

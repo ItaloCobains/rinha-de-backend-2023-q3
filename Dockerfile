@@ -46,8 +46,6 @@ COPY . .
 RUN bundle exec bootsnap precompile app/ lib/
 
 
-
-
 # Final stage for app image
 FROM base
 
@@ -65,5 +63,6 @@ ENV RUBYOPT="--yjit"
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start server via Thruster by default, this can be overwritten at runtime
-EXPOSE 80
+EXPOSE 3000
+EXPOSE 3001
 CMD ["bundle", "exec", "falcon", "host"]

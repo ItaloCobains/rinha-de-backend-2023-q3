@@ -64,12 +64,12 @@ class RinhaBackendSimulation
     ),
     buscaPessoas.inject(
       constantUsersPerSec(2).during(25.seconds), // warm up
-      
+
       rampUsersPerSec(6).to(100).during(3.minutes) // lezzz go!!!
     ),
     buscaInvalidaPessoas.inject(
       constantUsersPerSec(2).during(25.seconds), // warm up
-      
+
       rampUsersPerSec(6).to(40).during(3.minutes) // lezzz go!!!
     )
   ).protocols(httpProtocol)
