@@ -30,7 +30,7 @@ module Limited
 		
 		# Acquire the semaphore. May block until the semaphore is available.
 		def acquire
-			Console.debug(self, "Acquiring semaphore...")
+			Console.warn(self, "Acquiring semaphore... size: #{@queue.size}")
 			@queue.pop
 			Console.debug(self, "Acquired semaphore...")
 

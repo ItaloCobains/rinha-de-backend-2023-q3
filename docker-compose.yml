@@ -11,18 +11,17 @@ services:
       - RAILS_ENV=production
       - RAILS_LOG_TO_STDOUT=true
       - SECRET_KEY_BASE=a7c982873e4d55be7d85b5bd7c784cd1db0b9604abf2ea0ad9b267f6be52ba63c24c281f66596d9b66990d962cbf65ef48c54cdb37aaec93b2c7f4261fb7eed5
-      - DB_POOL=100
-      - DB_PORT=5432
-      - DB_HOST=localhost
-      - PORT=3000
+      - DB_POOL=50
+      - DB_PORT=5433
+      - DB_HOST=db
       # - DB_PORT=6432
       # - DB_HOST=pgbouncer
       - RAILS_LOG_LEVEL=debug
     deploy:
       resources:
         limits:
-          cpus: "0.2"
-          memory: "300MB"
+          cpus: '0.3'
+          memory: '640MB'
 
   api2:
     build:
@@ -36,18 +35,17 @@ services:
       - RAILS_ENV=production
       - RAILS_LOG_TO_STDOUT=true
       - SECRET_KEY_BASE=a7c982873e4d55be7d85b5bd7c784cd1db0b9604abf2ea0ad9b267f6be52ba63c24c281f66596d9b66990d962cbf65ef48c54cdb37aaec93b2c7f4261fb7eed5
-      - DB_POOL=100
-      - DB_PORT=5432
-      - DB_HOST=localhost
-      - PORT=3001
+      - DB_POOL=50
+      - DB_PORT=5433
+      - DB_HOST=db
       # - DB_PORT=6432
       # - DB_HOST=pgbouncer
       - RAILS_LOG_LEVEL=debug
     deploy:
       resources:
         limits:
-          cpus: "0.2"
-          memory: "300MB"
+          cpus: '0.3'
+          memory: '640MB'
 
   nginx:
     image: nginx:latest
@@ -60,8 +58,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.2"
-          memory: "328MB"
+          cpus: '0.1'
+          memory: '256MB'
 
   db:
     image: postgres:latest
@@ -77,8 +75,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1.0"
-          memory: "2144MB"
+          cpus: '0.8'
+          memory: '1536MB'
           # cpus: '0.5'
           # memory: '1024MB'
 
