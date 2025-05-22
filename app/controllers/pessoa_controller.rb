@@ -9,9 +9,7 @@ class PessoaController < ApplicationController
     search = params[:t]
     return render json: { error: "Parâmetro de busca 't' é obrigatório" }, status: :bad_request if search.blank?
 
-    search_term = "%#{search}%"
-
-    @pessoas = Pessoa.where("lower(apelido || nome || stack::text) LIKE ?", search_term.downcase).limit(50)
+    @pessoas = Pessoa.where("searchable_text @@ to_tsquery(?)", search.split(' ').join(' & ')).limit(50)
 
     render json: @pessoas
   end
