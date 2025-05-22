@@ -22,9 +22,7 @@ default: &default
   port: <%= ENV.fetch("DB_PORT", 5432) %>
   database: rails_app
   #variables:
-    #statement_timeout: '1s'
-
-
+  #statement_timeout: '1s'
 
 development:
   <<: *default

@@ -24,8 +24,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_20_113227) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.virtual "searchable_text", type: :text, as: "concat_search(nome, apelido, (stack)::json)", stored: true
-    t.index ["apelido"], name: "index_pessoas_on_apelido", unique: true
-    t.index ["searchable_text"], name: "index_pessoas_on_searchable_text_trgm_gist", opclass: :gist_trgm_ops, using: :gist
+    t.index [ "apelido" ], name: "index_pessoas_on_apelido", unique: true
+    t.index [ "searchable_text" ], name: "index_pessoas_on_searchable_text_trgm_gist", opclass: :gist_trgm_ops, using: :gist
   end
   create_function :concat_search, sql_definition: <<-'SQL'
       CREATE OR REPLACE FUNCTION public.concat_search(_nome character varying, _apelido character varying, _stack json)
@@ -38,5 +38,4 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_20_113227) do
         END;
       $function$
   SQL
-
 end

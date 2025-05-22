@@ -9,16 +9,14 @@ class PessoaController < ApplicationController
     search = params[:t]
     return render json: { error: "Parâmetro de busca 't' é obrigatório" }, status: :bad_request if search.blank?
 
-    search_term = "%#{search}%"
-
-    @pessoas = Pessoa.where("lower(apelido || nome || stack::text) LIKE ?", search_term.downcase).limit(50)
+    @pessoas = Pessoa.where("searchable_text ILIKE ?", "%#{search}%").limit(50)
 
     render json: @pessoas
   end
 
   def show
     @pessoa = Pessoa.find_by(id: params[:id])
-    
+
     if @pessoa
       render json: @pessoa
     else
@@ -28,14 +26,14 @@ class PessoaController < ApplicationController
 
   def create
     @pessoa = Pessoa.new(pessoa_params)
-    
+
     if @pessoa.save
-      response.headers['Location'] = "/pessoas/#{@pessoa.id}"
+      response.headers["Location"] = "/pessoas/#{@pessoa.id}"
       render json: @pessoa, status: :created
     else
-      render json: { error: @pessoa.errors }, status: :unprocessable_entity  
+      render json: { error: @pessoa.errors }, status: :unprocessable_entity
     end
-  rescue ActionController::ParameterMissing, JSON::ParserError => e
+  rescue ActionController::ParameterMissing, JSON::ParserError
     render json: { error: "Requisição inválida" }, status: :bad_request
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
     render json: { error: "Apelido já existente" }, status: :unprocessable_entity and return

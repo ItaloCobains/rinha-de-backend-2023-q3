@@ -4,13 +4,13 @@ class Pessoa < ApplicationRecord
   validates :nascimento, presence: true
   validate :validate_stack
 
-  private 
+  private
 
   def validate_stack
     return if stack.nil?
 
     unless stack.is_a?(Array) && stack.all? {  it.is_a?(String) && it.length <= 32 }
       errors.add(:stack, "deve ser um vetor de strings com cada elemento de até 32 caracteres")
-    end 
+    end
   end
 end
