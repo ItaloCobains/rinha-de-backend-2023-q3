@@ -9,7 +9,7 @@ class PessoaController < ApplicationController
     search = params[:t]
     return render json: { error: "Parâmetro de busca 't' é obrigatório" }, status: :bad_request if search.blank?
 
-    @pessoas = Pessoa.where("searchable_text @@ to_tsquery(?)", search.split(' ').join(' & ')).limit(50)
+    @pessoas = Pessoa.where("searchable_text @@ to_tsquery(?)", search.split(" ").join(" & ")).limit(50)
 
     render json: @pessoas
   end
@@ -27,12 +27,12 @@ class PessoaController < ApplicationController
   def create
     @pessoa = Pessoa.new(pessoa_params)
 
-    if @pessoa.save
+   if @pessoa.save
       response.headers["Location"] = "/pessoas/#{@pessoa.id}"
       render json: @pessoa, status: :created
-    else
+   else
       render json: { error: @pessoa.errors }, status: :unprocessable_entity
-    end
+   end
   rescue ActionController::ParameterMissing, JSON::ParserError
     render json: { error: "Requisição inválida" }, status: :bad_request
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation

@@ -38,4 +38,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_22_133652) do
         END;
       $function$
   SQL
+
 end
