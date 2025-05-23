@@ -1,47 +1,77 @@
 class PessoaController < ApplicationController
   def contagem_pessoas
-    @contagem = Pessoa.count
-
-    render plain: @contagem.to_s
+    contagem = Pessoa.count
+    render plain: contagem.to_s
   end
 
   def index
-    search = params[:t]
-    return render json: { error: "Parâmetro de busca 't' é obrigatório" }, status: :bad_request if search.blank?
+    termo = params[:t]
+    return render json: { error: "Parâmetro de busca 't' é obrigatório" }, status: :bad_request if termo.blank?
 
-    @pessoas = Pessoa.where("searchable_text @@ to_tsquery(?)", search.split(" ").join(" & ")).limit(50)
+    query = termo.split.map { |t| t.gsub(/['?\\]/, "") }.join(" & ")
 
-    render json: @pessoas
+    pessoas = Pessoa.where("searchable_text @@ to_tsquery(?)", query).limit(50)
+    render json: pessoas
   end
 
   def show
-    @pessoa = Pessoa.find_by(id: params[:id])
-
-    if @pessoa
-      render json: @pessoa
+    pessoa = Pessoa.find_by(id: params[:id])
+    if pessoa
+      render json: pessoa
     else
       render json: { error: "Pessoa não encontrada" }, status: :not_found
     end
   end
 
   def create
-    @pessoa = Pessoa.new(pessoa_params)
+  body = request.body.read
+  begin
+    json = JSON.parse(body)
 
-   if @pessoa.save
-      response.headers["Location"] = "/pessoas/#{@pessoa.id}"
-      render json: @pessoa, status: :created
-   else
-      render json: { error: @pessoa.errors }, status: :unprocessable_entity
-   end
-  rescue ActionController::ParameterMissing, JSON::ParserError
-    render json: { error: "Requisição inválida" }, status: :bad_request
+    apelido = json["apelido"]
+    nome = json["nome"]
+    nascimento_str = json["nascimento"]
+    stack = json["stack"] || []
+
+    # Validação básica dos campos
+    unless apelido.is_a?(String) && apelido.size <= 32 &&
+           nome.is_a?(String) && nome.size <= 100 &&
+           nascimento_str.is_a?(String) && nascimento_str.match?(/^\d{4}-\d{2}-\d{2}$/) &&
+           (stack.nil? || (stack.is_a?(Array) && stack.all? { |s| s.is_a?(String) && s.size <= 32 }))
+      return render json: { error: "Conteúdo inválido" }, status: :unprocessable_entity
+    end
+
+    # Converter nascimento para Date
+    nascimento = begin
+      Date.parse(nascimento_str)
+    rescue ArgumentError
+      nil
+    end
+
+    if nascimento.nil?
+      return render json: { error: "Data de nascimento inválida" }, status: :unprocessable_entity
+    end
+
+    uuid = SecureRandom.uuid
+    now = Time.now.utc
+
+    Pessoa.insert_all!([ {
+      id: uuid,
+      apelido: apelido,
+      nome: nome,
+      nascimento: nascimento,
+      stack: stack,
+      created_at: now,
+      updated_at: now
+    } ])
+
+    response.headers["Location"] = "/pessoas/#{uuid}"
+    render json: { id: uuid, apelido: apelido, nome: nome, nascimento: nascimento_str, stack: stack }, status: :created
+
   rescue ActiveRecord::RecordNotUnique, PG::UniqueViolation
-    render json: { error: "Apelido já existente" }, status: :unprocessable_entity and return
+    render json: { error: "Apelido já existente" }, status: :unprocessable_entity
+  rescue JSON::ParserError, TypeError
+    render json: { error: "Requisição inválida" }, status: :bad_request
   end
-
-  private
-
-  def pessoa_params
-    params.require(:pessoa).permit(:apelido, :nome, :nascimento, stack: [])
-  end
+end
 end

@@ -15,14 +15,12 @@ services:
       - DB_PORT=5432
       - DB_HOST=localhost
       - PORT=3000
-      # - DB_PORT=6432
-      # - DB_HOST=pgbouncer
       - RAILS_LOG_LEVEL=debug
     deploy:
       resources:
         limits:
-          cpus: "0.3"
-          memory: "640MB"
+          cpus: "0.5"
+          memory: "840MB"
 
   api2:
     build:
@@ -40,14 +38,12 @@ services:
       - DB_PORT=5432
       - DB_HOST=localhost
       - PORT=3001
-      # - DB_PORT=6432
-      # - DB_HOST=pgbouncer
       - RAILS_LOG_LEVEL=debug
     deploy:
       resources:
         limits:
-          cpus: "0.3"
-          memory: "640MB"
+          cpus: "0.5"
+          memory: "840MB"
 
   nginx:
     image: nginx:latest
@@ -77,33 +73,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.8"
-          memory: "1536MB"
-          # cpus: '0.5'
-          # memory: '1024MB'
+          cpus: "0.4"
+          memory: "1136MB"
 
-  # pgbouncer:
-  #   image: bitnami/pgbouncer:latest
-  #   depends_on:
-  #     - db
-  #   ports:
-  #     - "6432:6432"
-  #   environment:
-  #     - POSTGRESQL_USERNAME=postgres
-  #     - POSTGRESQL_PASSWORD=postgres
-  #     - POSTGRESQL_DATABASE=rails_app
-  #     - POSTGRESQL_HOST=db
-  #     - POSTGRESQL_PORT=5433
-  #     - PGBOUNCER_DATABASE=rails_app
-  #     - PGBOUNCER_PORT=6432
-  #     - POOL_MODE=transaction
-  #     - MAX_DB_CONNECTIONS=100
-  #     - DB_HOST
-  #     - PGBOUNCER_MAX_CLIENT_CONN=1000
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: '0.25'
-  #         memory: '512MB'
 volumes:
   postgres_data:
