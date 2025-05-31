@@ -9,7 +9,7 @@ port = ENV["PORT"] || 80
 
 
 service hostname do
-  count 2
+  count 1
   preload "preload.rb"
   include Falcon::Environment::Rack
 
