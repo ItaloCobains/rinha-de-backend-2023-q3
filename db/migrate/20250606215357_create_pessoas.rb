@@ -1,0 +1,10 @@
+class CreatePessoas < ActiveRecord::Migration[8.0]
+  def change
+    create_table :pessoas, id: :uuid do |t|
+      t.string :apelido,    null: false, index: { unique: true }, limit: 32
+      t.string :nome,       null: false, limit: 100
+      t.date   :nascimento, null: false
+      t.string :stack
+    end
+  end
+end

@@ -1,16 +1,22 @@
 class Pessoa < ApplicationRecord
-  validates :apelido, presence: true, uniqueness: true, length: { maximum: 32 }
-  validates :nome, presence: true, length: { maximum: 100 }
+  self.ignored_columns = %w[searchable]
+
+  serialize :stack, type: Array, coder: TagCoder
+
+  scope :search, -> (value) { where("pessoas.searchable ILIKE ?", "%#{value}%") }
+
+  validates :apelido,    presence: true, length: { maximum: 32  }
+  validates :nome,       presence: true, length: { maximum: 100 }
   validates :nascimento, presence: true
-  validate :validate_stack
 
-  private 
+  validate :stack_must_contain_valid_elements
 
-  def validate_stack
-    return if stack.nil?
-
-    unless stack.is_a?(Array) && stack.all? {  it.is_a?(String) && it.length <= 32 }
-      errors.add(:stack, "deve ser um vetor de strings com cada elemento de até 32 caracteres")
+  private
+    def stack_must_contain_valid_elements
+      errors.add(:stack, :invalid) unless stack.all? { |item| valid_stack_element?(item) }
     end
-  end
+
+    def valid_stack_element?(item)
+      item.is_a?(String) && item.present? && item.size <= 32
+    end
 end

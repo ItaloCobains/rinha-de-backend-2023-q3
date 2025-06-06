@@ -8,6 +8,7 @@ services:
     depends_on:
       - db
     environment:
+      - RUBY_YJIT_ENABLE=1
       - DATABASE_URL=postgres://postgres:postgres@db:5432/rails_app
       - RAILS_ENV=production
       - RAILS_LOG_TO_STDOUT=true
@@ -26,6 +27,7 @@ services:
     depends_on:
       - db
     environment:
+      - RUBY_YJIT_ENABLE=1
       - DATABASE_URL=postgres://postgres:postgres@db:5432/rails_app
       - RAILS_ENV=production
       - RAILS_LOG_TO_STDOUT=true
@@ -48,7 +50,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.25'
+          cpus: '0.15'
           memory: '0.5GB'
 
   db:

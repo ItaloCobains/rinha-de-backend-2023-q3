@@ -10,23 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_19_130702) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_06_215508) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
-  enable_extension "pgcrypto"
 
   create_table "pessoas", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "apelido", limit: 32, null: false
     t.string "nome", limit: 100, null: false
     t.date "nascimento", null: false
-    t.jsonb "stack", default: [], null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index "lower((((apelido)::text || (nome)::text) || (stack)::text)) gin_trgm_ops", name: "idx_pessoas_concat_trgm", using: :gin
+    t.string "stack"
+    t.virtual "searchable", type: :text, as: "(((((nome)::text || ' '::text) || (apelido)::text) || ' '::text) || (COALESCE(stack, ''::character varying))::text)", stored: true
     t.index ["apelido"], name: "index_pessoas_on_apelido", unique: true
-    t.index ["nascimento"], name: "index_pessoas_on_nascimento"
-    t.index ["nome"], name: "index_pessoas_on_nome"
-    t.index ["stack"], name: "index_pessoas_on_stack", using: :gin
+    t.index ["searchable"], name: "index_pessoas_on_searchable", opclass: :gist_trgm_ops, using: :gist
   end
 end
