@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_06_215508) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_06_235046) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -23,5 +23,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_215508) do
     t.virtual "searchable", type: :text, as: "(((((nome)::text || ' '::text) || (apelido)::text) || ' '::text) || (COALESCE(stack, ''::character varying))::text)", stored: true
     t.index ["apelido"], name: "index_pessoas_on_apelido", unique: true
     t.index ["searchable"], name: "index_pessoas_on_searchable", opclass: :gist_trgm_ops, using: :gist
+    t.index ["searchable"], name: "index_pessoas_searchable_short", where: "(length(searchable) <= 50)"
   end
 end

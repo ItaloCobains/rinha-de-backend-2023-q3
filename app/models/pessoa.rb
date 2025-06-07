@@ -3,7 +3,16 @@ class Pessoa < ApplicationRecord
 
   serialize :stack, type: Array, coder: TagCoder
 
-  scope :search, -> (value) { where("pessoas.searchable ILIKE ?", "%#{value}%") }
+  scope :search, -> (value) {
+    return none if value.blank?
+
+    if value.length <= 2
+      where("pessoas.searchable ILIKE ?", "%#{value}%")
+    else
+      where("pessoas.searchable % ? OR pessoas.searchable ILIKE ?", value, "%#{value}%")
+        .order(Arel.sql("similarity(pessoas.searchable, #{connection.quote(value)}) DESC"))
+    end
+  }
 
   validates :apelido,    presence: true, length: { maximum: 32  }
   validates :nome,       presence: true, length: { maximum: 100 }
